@@ -64,7 +64,7 @@ function Dashboard() {
           </div>
           <div className="feature-list">
             <div><strong>Registro social</strong><span>Personas, zona asignada y observaciones de contexto.</span></div>
-            <div><strong>Mapa operativo</strong><span>Cruces, distritos y nivel de riesgo por zona.</span></div>
+            <div><strong>Mapa operativo</strong><span>Cruces con enlace directo a Google Maps y nivel de riesgo por zona.</span></div>
             <div><strong>Priorizacion</strong><span>Necesidades por tipo, descripcion y urgencia.</span></div>
             <div><strong>Accion institucional</strong><span>Campanas con institucion responsable, fecha y estado.</span></div>
           </div>

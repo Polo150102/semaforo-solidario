@@ -1,6 +1,13 @@
 import { useEffect, useState } from "react";
 import api from "../services/api";
 
+const crearUrlMapa = (persona) => {
+  const zona = persona.nombre_cruce || "";
+  const distrito = persona.distrito || "";
+  const busqueda = `${zona}, ${distrito}, Lima, Peru`;
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(busqueda)}`;
+};
+
 function Personas() {
   const [personas, setPersonas] = useState([]);
   const [zonas, setZonas] = useState([]);
@@ -145,6 +152,7 @@ function Personas() {
                   <th>Edad</th>
                   <th>Nacionalidad</th>
                   <th>Zona</th>
+                  <th>Mapa</th>
                   <th>Observacion</th>
                 </tr>
               </thead>
@@ -155,6 +163,15 @@ function Personas() {
                     <td>{persona.edad_aproximada}</td>
                     <td>{persona.nacionalidad}</td>
                     <td>{persona.nombre_cruce || "Sin zona"}</td>
+                    <td>
+                      {persona.nombre_cruce ? (
+                        <a className="map-link" href={crearUrlMapa(persona)} target="_blank" rel="noreferrer">
+                          Ver mapa
+                        </a>
+                      ) : (
+                        "No disponible"
+                      )}
+                    </td>
                     <td>{persona.observacion}</td>
                   </tr>
                 ))}

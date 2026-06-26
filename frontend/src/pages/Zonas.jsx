@@ -7,6 +7,11 @@ const riesgoClass = {
   Bajo: "success"
 };
 
+const crearUrlMapa = (zona) => {
+  const busqueda = `${zona.nombre_cruce}, ${zona.distrito}, Lima, Peru`;
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(busqueda)}`;
+};
+
 function Zonas() {
   const [zonas, setZonas] = useState([]);
   const [form, setForm] = useState({
@@ -98,6 +103,7 @@ function Zonas() {
                   <th>Cruce</th>
                   <th>Distrito</th>
                   <th>Riesgo</th>
+                  <th>Mapa</th>
                 </tr>
               </thead>
               <tbody>
@@ -106,6 +112,11 @@ function Zonas() {
                     <td>{zona.nombre_cruce}</td>
                     <td>{zona.distrito}</td>
                     <td><span className={`status ${riesgoClass[zona.nivel_riesgo] || "neutral"}`}>{zona.nivel_riesgo}</span></td>
+                    <td>
+                      <a className="map-link" href={crearUrlMapa(zona)} target="_blank" rel="noreferrer">
+                        Ver mapa
+                      </a>
+                    </td>
                   </tr>
                 ))}
               </tbody>
