@@ -9,12 +9,30 @@ const formatearFecha = (valor) => {
   return `${dia}/${mes}/${anio}`;
 };
 
+const riesgoClass = {
+  Alto: "danger",
+  Medio: "warning",
+  Bajo: "success"
+};
+
+const crearUrlMapa = (zona) => {
+  const busqueda = `${zona.nombre_cruce}, ${zona.distrito}, Lima, Peru`;
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(busqueda)}`;
+};
+
 function PublicCampanas() {
   const [campanas, setCampanas] = useState([]);
+  const [zonas, setZonas] = useState([]);
 
   useEffect(() => {
-    api.get("/api/campanas")
-      .then((res) => setCampanas(res.data.filter((campana) => campana.estado === "Activa")))
+    Promise.all([
+      api.get("/api/campanas"),
+      api.get("/api/zonas")
+    ])
+      .then(([campanasRes, zonasRes]) => {
+        setCampanas(campanasRes.data.filter((campana) => campana.estado === "Activa"));
+        setZonas(zonasRes.data);
+      })
       .catch((error) => console.error("Error al cargar campanas publicas:", error));
   }, []);
 
@@ -43,6 +61,29 @@ function PublicCampanas() {
             </footer>
           </article>
         ))}
+      </section>
+
+      <section className="public-section">
+        <div className="section-heading">
+          <span className="eyebrow">Zonas de atencion</span>
+          <h2>Cruces identificados</h2>
+          <p>Consulta en mapa los puntos registrados para orientar campanas y acciones de apoyo.</p>
+        </div>
+
+        <div className="zone-public-grid">
+          {zonas.map((zona) => (
+            <article className="zone-public-card" key={zona.id}>
+              <div>
+                <span className={`status ${riesgoClass[zona.nivel_riesgo] || "neutral"}`}>{zona.nivel_riesgo}</span>
+                <h4>{zona.nombre_cruce}</h4>
+                <p>{zona.distrito}</p>
+              </div>
+              <a className="map-link" href={crearUrlMapa(zona)} target="_blank" rel="noreferrer">
+                Ver mapa
+              </a>
+            </article>
+          ))}
+        </div>
       </section>
     </main>
   );
