@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const path = require("path");
 require("dotenv").config();
 
 const pool = require("./db");
@@ -10,7 +11,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.get("/", (req, res) => {
+app.get("/api/health", (req, res) => {
   res.json({
     message: "API Semaforo Solidario funcionando"
   });
@@ -212,6 +213,13 @@ app.post("/api/campanas", async (req, res) => {
     console.error(error);
     res.status(500).json({ error: "Error al registrar campaña" });
   }
+});
+
+const frontendDist = path.join(__dirname, "../../frontend/dist");
+app.use(express.static(frontendDist));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(frontendDist, "index.html"));
 });
 
 const PORT = process.env.PORT || 3000;
