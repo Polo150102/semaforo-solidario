@@ -1,0 +1,25 @@
+{
+  "name": "semaforo-solidario-backend",
+  "version": "1.0.0",
+  "description": "Backend del MVP Semaforo Solidario",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "nodemon src/index.js",
+    "start": "node src/index.js",
+    "init-db": "node src/initDB.js",
+    "build": "echo \"Backend sin build\""
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^16.6.1",
+    "express": "^4.22.2",
+    "pg": "^8.22.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
+}
