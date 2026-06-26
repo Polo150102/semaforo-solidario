@@ -20,9 +20,15 @@ const crearUrlMapa = (zona) => {
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(busqueda)}`;
 };
 
+const crearUrlMapaEmbebido = (zona) => {
+  const busqueda = `${zona.nombre_cruce}, ${zona.distrito}, Lima, Peru`;
+  return `https://maps.google.com/maps?q=${encodeURIComponent(busqueda)}&output=embed`;
+};
+
 function PublicCampanas() {
   const [campanas, setCampanas] = useState([]);
   const [zonas, setZonas] = useState([]);
+  const [zonaSeleccionada, setZonaSeleccionada] = useState(null);
 
   useEffect(() => {
     Promise.all([
@@ -32,6 +38,7 @@ function PublicCampanas() {
       .then(([campanasRes, zonasRes]) => {
         setCampanas(campanasRes.data.filter((campana) => campana.estado === "Activa"));
         setZonas(zonasRes.data);
+        setZonaSeleccionada(zonasRes.data[0] || null);
       })
       .catch((error) => console.error("Error al cargar campanas publicas:", error));
   }, []);
@@ -70,19 +77,49 @@ function PublicCampanas() {
           <p>Consulta en mapa los puntos registrados para orientar campanas y acciones de apoyo.</p>
         </div>
 
-        <div className="zone-public-grid">
-          {zonas.map((zona) => (
-            <article className="zone-public-card" key={zona.id}>
-              <div>
-                <span className={`status ${riesgoClass[zona.nivel_riesgo] || "neutral"}`}>{zona.nivel_riesgo}</span>
-                <h4>{zona.nombre_cruce}</h4>
-                <p>{zona.distrito}</p>
+        <div className="public-map-layout">
+          <div className="zone-public-grid">
+            {zonas.map((zona) => (
+              <article
+                className={`zone-public-card ${zonaSeleccionada?.id === zona.id ? "active" : ""}`}
+                key={zona.id}
+              >
+                <button type="button" onClick={() => setZonaSeleccionada(zona)}>
+                  <span className={`status ${riesgoClass[zona.nivel_riesgo] || "neutral"}`}>{zona.nivel_riesgo}</span>
+                  <strong>{zona.nombre_cruce}</strong>
+                  <small>{zona.distrito}</small>
+                </button>
+              </article>
+            ))}
+          </div>
+
+          <div className="embedded-map-card">
+            {zonaSeleccionada ? (
+              <>
+                <div className="embedded-map-heading">
+                  <div>
+                    <span className="eyebrow">Mapa del cruce</span>
+                    <h3>{zonaSeleccionada.nombre_cruce}</h3>
+                    <p>{zonaSeleccionada.distrito}</p>
+                  </div>
+                  <a className="map-link" href={crearUrlMapa(zonaSeleccionada)} target="_blank" rel="noreferrer">
+                    Abrir grande
+                  </a>
+                </div>
+                <iframe
+                  title={`Mapa de ${zonaSeleccionada.nombre_cruce}`}
+                  src={crearUrlMapaEmbebido(zonaSeleccionada)}
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+              </>
+            ) : (
+              <div className="empty-map">
+                <h3>Sin zonas registradas</h3>
+                <p>Cuando existan cruces registrados, el mapa aparecera en esta seccion.</p>
               </div>
-              <a className="map-link" href={crearUrlMapa(zona)} target="_blank" rel="noreferrer">
-                Ver mapa
-              </a>
-            </article>
-          ))}
+            )}
+          </div>
         </div>
       </section>
     </main>
